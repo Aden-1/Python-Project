@@ -8,7 +8,7 @@ def main():
         status = input("type 'Q' to quit and 'S' to restart the quiz.")
         if status.lower() == 'q':
             playing = 'n'
-        elif status.lower() == 's'
+        elif status.lower() == 's':
             #restart quiz
 
 
@@ -23,5 +23,5 @@ def validateAnswer():
 
 def storeResults():
 
-if __name__ = __main__:
+if __name__ == __main__:
     main()
