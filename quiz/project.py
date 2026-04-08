@@ -16,9 +16,9 @@ def getUserInfo():
     validateInfo()
 
 def validateInfo():
-#hello
+
 def getQuestion():
-#addS
+
 def validateAnswer():
 
 def storeResults():
