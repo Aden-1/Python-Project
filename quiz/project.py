@@ -16,7 +16,7 @@ def getUserInfo():
     validateInfo()
 
 def validateInfo():
-
+#hello
 def getQuestion():
 
 def validateAnswer():
