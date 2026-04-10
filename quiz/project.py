@@ -16,12 +16,12 @@ def getUserInfo():
     validateInfo()
 
 def validateInfo():
-
+#hello
 def getQuestion():
-
+#hiiii
 def validateAnswer():
 
 def storeResults():
 
-if __name__ == __main__:
+if __name__ = __main__:
     main()
