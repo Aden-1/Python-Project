@@ -50,8 +50,6 @@ def main():
             else:
                 print("Incorrect. The correct answer is ", currentQuestion[4], ".", sep="")
 
-            # increment current question number
-            currentQuestionNumber += 1
             # separate questions
             print("")
 
