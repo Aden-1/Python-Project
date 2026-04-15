@@ -24,7 +24,8 @@ def validateAnswer():
 def storeResults(student_id,fName,lName,score,elapsedTime,answer): #feel free to rename the variables,
     """Saves the quiz results into a text file"""                  #i just put whatever as a placeholder
 
-    results = f"{student_id}_{fName}_{lName}.txt"
+    results = (student_id,"_",fName,"_",lName,".txt")
+
     with open(results, "w") as save:
         save.write("Student ID: ",student_id,"\n")
         save.write("Name: ",fName," ",lName,"\n")
