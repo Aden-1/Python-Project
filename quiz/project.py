@@ -2,10 +2,10 @@ import csv, random
 
 def main():
     playing = 'y'
-    ## CONFLICT COMMENT
+    ## NEW COMMENT
     score = 0
     NUMBER_OF_QUESTIONS = 10
-
+    #placeholder
     elapsedTime = 0
 
     while playing != 'n':
