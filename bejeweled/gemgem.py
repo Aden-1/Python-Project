@@ -150,9 +150,6 @@ def runGame():
             elif event.type == MOUSEBUTTONDOWN:
                 # this is the start of a mouse click or mouse drag
                 lastMouseDownX, lastMouseDownY = event.pos
-            elif event.type == KEYUP and event.key == K_x:
-                remove3x3(gameBoard, BOARDWIDTH // 2, BOARDHEIGHT // 2)
-                fillBoardAndAnimate(gameBoard, [], score)
 
         if clickedSpace and not firstSelectedGem:
             # This was the first gem clicked on.
@@ -233,12 +230,6 @@ def runGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
-def remove3x3(board, centerX, centerY):
-    for x in range(centerX - 1, centerX + 2):
-        for y in range(centerY - 1, centerY + 2):
-
-            if 0 <= x < BOARDWIDTH and 0 <= y < BOARDHEIGHT:
-                board[x][y] = EMPTY_SPACE
 
 def getSwappingGems(board, firstXY, secondXY):
     # If the gems at the (X, Y) coordinates of the two gems are adjacent,
@@ -367,6 +358,7 @@ def getGemAt(board, x, y):
         return None
     else:
         return board[x][y]
+
 
 def getDropSlots(board):
     # Creates a "drop slot" for each column and fills the slot with a
