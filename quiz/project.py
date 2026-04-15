@@ -2,16 +2,16 @@ import csv, random
 
 def main():
     playing = 'y'
-    ## UPDATED THE SAME LINE / CODE
+
     score = 0
     NUMBER_OF_QUESTIONS = 10
-    ## NEW COMMENT
+
     elapsedTime = 0
 
     while playing != 'n':
         ## GET USER INFO
         userFirst, userLast, userID = getUserInfo()
-        print(userFirst, userLast, userID) 
+        print(userFirst, userLast, userID)
 
         ## ASK THE USER 10 QUESTIONS (can be changed)
         questionList = []
