@@ -2,7 +2,7 @@ import csv, random
 
 def main():
     playing = 'y'
-    ## CONFLICT COMMENT
+    ## CONFLICT COMMENTS
     score = 0
     NUMBER_OF_QUESTIONS = 10
 
