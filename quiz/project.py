@@ -3,10 +3,12 @@ import csv, random
 def main():
     playing = 'y'
 
-    ## MERGE CONFLICT DEMO
+    ## TEST CONFLICT
 
-    Score = 0
+    score = 0
     NUMBER_OF_QUESTIONS = 10
+
+    elapsedTime = 0
 
     while playing != 'n':
         ## GET USER INFO
@@ -15,6 +17,8 @@ def main():
 
         ## ASK THE USER 10 QUESTIONS (can be changed)
         questionList = []
+        #Store valid answers given by the user
+        answerHistory = []
 
         for i in range(1,NUMBER_OF_QUESTIONS + 1):
             currentQuestionNumber = i
@@ -33,23 +37,39 @@ def main():
             # Get user answer
             userAnswer = input("Answer (A, B, or, C): ").lower()
 
+            ## Validate user answer
+            while userAnswer not in ('a', 'b', 'c'):
+                userAnswer = input("Invalid answer. Please enter A, B, or C: ").lower()
+
+            #store valid answer in answer history
+            answerHistory.append(userAnswer)
+
             ## CHECK IF ANSWER IS CORRECT
-            validateAnswer()
-            # increment score if correct
-            score =+ 1
+            if validateAnswer(currentQuestion, userAnswer):
+                # increment score
+                score += 1
+                print("Correct!")
+            else:
+                print("Incorrect. The correct answer is ", currentQuestion[4], ".", sep="")
 
             # increment current question number
             currentQuestionNumber += 1
+            # separate questions
+            print("")
 
         ## STORE RESULTS
-        storeResults()
+        storeResults()#vars for implementing store results: userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime
 
+        ## PRINT TEST RESULTS
+        print("Quiz complete! Your score is ", score, "/", NUMBER_OF_QUESTIONS, ".", sep="")
 
-        status = input("Type 'Q' to quit and 'S' to restart the quiz:")
+        ## ALLOW THE USER TO QUIT OR RESTART THE QUIZ WITH NEW QUESTIONS
+        status = input("Type 'Q' to quit and 'R' to restart the quiz:")
+
         if status.lower() == 'q':
             playing = 'n'
             print("Thanks for playing!")
-        elif status.lower() == 's':
+        elif status.lower() == 'r':
             #restart quiz
             print("NEW QUIZ!")
 
@@ -98,8 +118,9 @@ def genQuestions(requestedQuestionCount):
     return randomQuestions
 
 
-def validateAnswer():
-    print("placeholder")
+def validateAnswer(currentQuestion, userAnswer):
+    return currentQuestion[4].lower() == userAnswer
+
 
 
 def storeResults():
