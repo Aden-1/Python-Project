@@ -2,7 +2,7 @@ import csv, random
 
 def main():
     playing = 'y'
-    ##
+    ## TEST CONFLICT
     score = 0
     NUMBER_OF_QUESTIONS = 10
 
@@ -11,7 +11,7 @@ def main():
     while playing != 'n':
         ## GET USER INFO
         userFirst, userLast, userID = getUserInfo()
-        print(userFirst, userLast, userID)
+        print(userFirst, userLast, userID) 
 
         ## ASK THE USER 10 QUESTIONS (can be changed)
         questionList = []
