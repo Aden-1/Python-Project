@@ -88,8 +88,8 @@ def getUserInfo():
     print('Hello ' + userFirst + ' ' + userLast + ' Welcome to the quiz, Good Luck!')
     print('='*40)
     pass
-
-    #return userFirst, userLast, userID
+#sdasda
+    return userFirst, userLast, userID
 
 def validateInfo():
     print("placeholder")
