@@ -1,4 +1,4 @@
-import csv, random
+import csv, random, time
 
 def main():
     playing = 'y'
@@ -6,10 +6,13 @@ def main():
     score = 0
     NUMBER_OF_QUESTIONS = 10
 
-    elapsedTime = 0
+
 
     while playing != 'n':
         ## GET USER INFO
+        startTime = time.time()
+        timeLimit = 600
+        elapsedTime = 0
         userFirst, userLast, userID = getUserInfo()
         print(userFirst, userLast, userID)
 
@@ -19,6 +22,11 @@ def main():
         answerHistory = []
 
         for i in range(1,NUMBER_OF_QUESTIONS + 1):
+            #Time limit
+            elapsedTime = time.time() - startTime
+            if elapsedTime >= timeLimit:
+                print("Time limit exceeded.\n")
+                break
             currentQuestionNumber = i
             ## Get questions one at a time
             currentQuestion, questionList = getQuestion(currentQuestionNumber, questionList)
