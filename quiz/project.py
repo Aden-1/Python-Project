@@ -3,17 +3,17 @@ import csv, random, time
 def main():
     playing = 'y'
 
-
     NUMBER_OF_QUESTIONS = 10
 
 
-
     while playing != 'n':
-        ## GET USER INFO
+
         startTime = time.time()
         timeLimit = 600
         elapsedTime = 0
         score=0
+
+        ## GET USER INFO
         userFirst, userLast, userID = getUserInfo()
         print(userFirst, userLast, userID)
 
