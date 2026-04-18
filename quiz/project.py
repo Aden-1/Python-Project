@@ -133,11 +133,11 @@ def storeResults(userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questi
 
     results = (userID,"_",userFirst,"_",userLast,".txt")
 
-    with open("results.txt", "w") as save:
+    with open(results, "w") as save:
         save.write(f"Student ID: {userID}\n")
         save.write(f"Name: {userFirst} {userLast}\n")
         save.write(f"Score: {score}/{NUMBER_OF_QUESTIONS}\n")
-        save.write(f"Elapsed Time: {elapsedTime} seconds\n")
+        save.write(f"Elapsed Time: {round(elapsedTime,2)} seconds\n")
 
         for i in range(len(answerHistory)):
             question = questionList[i] #loops through the answers the student entered and outputs it.
