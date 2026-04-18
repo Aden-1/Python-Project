@@ -63,7 +63,7 @@ def main():
             print("")
 
         ## STORE RESULTS
-        storeResults()#vars for implementing store results: userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime
+        storeResults(userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime)#vars for implementing store results: userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime
 
         ## PRINT TEST RESULTS
         print("Quiz complete! Your score is ", score, "/", NUMBER_OF_QUESTIONS, ".", sep="")
@@ -131,7 +131,7 @@ def validateAnswer(currentQuestion, userAnswer):
 def storeResults(userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime):#vars for implementing store results: userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime
     """Saves the quiz results into a text file"""                  #i just put whatever as a placeholder
 
-    results = (userID,"_",userFirst,"_",userLast,".txt")
+    results = str((userID + "_" + userFirst + "_" + userLast + ".txt"))
 
     with open(results, "w") as save:
         save.write(f"Student ID: {userID}\n")
