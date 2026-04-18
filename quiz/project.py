@@ -3,7 +3,7 @@ import csv, random, time
 def main():
     playing = 'y'
 
-    score = 0
+
     NUMBER_OF_QUESTIONS = 10
 
 
@@ -13,6 +13,7 @@ def main():
         startTime = time.time()
         timeLimit = 600
         elapsedTime = 0
+        score=0
         userFirst, userLast, userID = getUserInfo()
         print(userFirst, userLast, userID)
 
@@ -127,21 +128,22 @@ def validateAnswer(currentQuestion, userAnswer):
 
 
 
-def storeResults():#vars for implementing store results: userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime
+def storeResults(userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime):#vars for implementing store results: userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime
     """Saves the quiz results into a text file"""                  #i just put whatever as a placeholder
 
-    results = (student_id,"_",fName,"_",lName,".txt")
+    results = (userID,"_",userFirst,"_",userLast,".txt")
 
     with open("results.txt", "w") as save:
-        save.write("Student ID: ",student_id,"\n")
-        save.write("Name: ",fName," ",lName,"\n")
-        save.write("Score: ",score,"\n")
+        save.write("Student ID: ",userID,"\n")
+        save.write("Name: ",userFirst," ",userLast,"\n")
+        save.write("Score: ",score,"/",NUMBER_OF_QUESTIONS,"\n")
         save.write("Elapsed Time: ",elapsedTime,"\n")
 
-        for i in answer: #loops through the answers the student entered (answer) being the directory we're saving the answers in. (change if want)
-            save.write("Question: ",i[question],"\n")
-            save.write("Correct answer: ", i[answer],"\n")
-            save.write("Selected: ",i[studentAnswer]) #placeholder variable for whatever the student's entered answer is.
+        for i in range(len(answerHistory)):
+            question = questionList[i] #loops through the answers the student entered and outputs it.
+            save.write("Question: ",question[0],"\n")
+            save.write("Correct answer: ",question[4],"\n")
+            save.write("Selected: ",answerHistory[i])
 
     print("Results saved.\n")
 
