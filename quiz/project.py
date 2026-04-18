@@ -63,7 +63,7 @@ def main():
             print("")
 
         ## STORE RESULTS
-        storeResults()#vars for implementing store results: userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime
+        storeResults(userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime)#vars for implementing store results: userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime
 
         ## PRINT TEST RESULTS
         print("Quiz complete! Your score is ", score, "/", NUMBER_OF_QUESTIONS, ".", sep="")
@@ -136,19 +136,19 @@ def validateAnswer(currentQuestion, userAnswer):
 def storeResults(userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime):#vars for implementing store results: userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime
     """Saves the quiz results into a text file"""                  #i just put whatever as a placeholder
 
-    results = (userID,"_",userFirst,"_",userLast,".txt")
+    results = str((userID + "_" + userFirst + "_" + userLast + ".txt"))
 
-    with open("results.txt", "w") as save:
-        save.write("Student ID: ",userID,"\n")
-        save.write("Name: ",userFirst," ",userLast,"\n")
-        save.write("Score: ",score,"/",NUMBER_OF_QUESTIONS,"\n")
-        save.write("Elapsed Time: ",elapsedTime,"\n")
+    with open(results, "w") as save:
+        save.write(f"Student ID: {userID}\n")
+        save.write(f"Name: {userFirst} {userLast}\n")
+        save.write(f"Score: {score}/{NUMBER_OF_QUESTIONS}\n")
+        save.write(f"Elapsed Time: {round(elapsedTime,2)} seconds\n")
 
         for i in range(len(answerHistory)):
             question = questionList[i] #loops through the answers the student entered and outputs it.
-            save.write("Question: ",question[0],"\n")
-            save.write("Correct answer: ",question[4],"\n")
-            save.write("Selected: ",answerHistory[i])
+            save.write(f"Question{i+1}: {question[0]}\n")
+            save.write(f"Correct Answer: {question[4]}\n")
+            save.write(f"Your Answer: {answerHistory[i]}\n")
 
     print("Results saved.\n")
 
