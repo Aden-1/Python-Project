@@ -81,10 +81,15 @@ def main():
 
 def getUserInfo():
     validateInfo()
-    userFirst = "temp"
-    userLast = "temp"
-    userID = "temp"
-    return userFirst, userLast, userID
+    userFirst = input("Hello please enter your first name: \n")
+    userLast = input("Hello please enter your last name: \n")
+    userID = input("And finally, what is your School ID?: \n")
+
+    print('Hello ' + userFirst + ' ' + userLast + ' Welcome to the quiz, Good Luck!')
+    print('='*40)
+    pass
+
+    #return userFirst, userLast, userID
 
 def validateInfo():
     print("placeholder")
