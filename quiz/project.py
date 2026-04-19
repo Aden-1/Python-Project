@@ -80,19 +80,26 @@ def main():
 
 
 def getUserInfo():
-    validateInfo()
-    userFirst = input("Hello please enter your first name: \n")
-    userLast = input("Hello please enter your last name: \n")
-    userID = input("And finally, what is your School ID?: \n")
 
+    userFirst = str(input("Hello and welcome, please enter your first name below: \n"))
+    userLast = str(input("Please enter your last name: \n"))
+    userID = input("And finally, what is your School ID?: \n")
+    userID = validateInfo(userID)
     print('Hello ' + userFirst + ' ' + userLast + ' Welcome to the quiz, Good Luck!')
-    print('='*40)
+    print('=' * 60)
     pass
-#sdasda
     return userFirst, userLast, userID
 
-def validateInfo():
-    print("placeholder")
+def validateInfo(userID):
+    while not (
+        len(userID) == 6 and
+        userID[0].upper() == 'A' and
+        userID[1] in '123456789' and
+        userID[2:].isdigit()
+    ):
+        userID = input('Invalid User ID, Please Try again: ')
+    return userID
+    #print("placeholder")
 
 def getQuestion(currentQuestionNumber, questionList):
     questions = questionList
