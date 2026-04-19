@@ -48,6 +48,12 @@ assert len(ALLCOLORS) * len(ALLSHAPES) * 2 >= BOARDWIDTH * BOARDHEIGHT, "Board i
 def main():
     global FPSCLOCK, DISPLAYSURF
     pygame.init()
+
+    pygame.mixer.init()  # initialize sound system
+    pygame.mixer.music.load("backgroundmusic.mp3")  #background music
+    pygame.mixer.music.play(-1)  # loop forever
+    pygame.mixer.music.set_volume(0.3)
+
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 
