@@ -1,10 +1,14 @@
 import csv, random, time
 
 def main():
+    """
+    Main function of the program.
+    Makes calls to other functions to execute tasks.
+    Will create a 10 or 20 question quiz and score the user's answers.
+    Quiz stops asking new questions after 10 minutes (600 seconds).
+    """
     playing = 'y'
-
     DEFAULT_NUM_OF_QUESTIONS = 10
-    quizLength = 10
 
 
     while playing != 'n':
@@ -13,6 +17,7 @@ def main():
         timeLimit = 600
         elapsedTime = 0
         score=0
+        quizLength = 10
 
         ## HAVE THE USER SELECT A 10 or 20 QUESTION QUIZ
         quizLength = input("How many questions would you like answer? Type '10' or '20': ")
@@ -34,48 +39,9 @@ def main():
         #Store valid answers given by the user
         answerHistory = []
 
-        for i in range(1,quizLength + 1):
-            #Time limit
-            elapsedTime = time.time() - startTime
-            if elapsedTime >= timeLimit:
-                print("Time limit exceeded.\n")
-                break
-            currentQuestionNumber = i
-            ## Get questions one at a time
-            currentQuestion, questionList = getQuestion(currentQuestionNumber, questionList, quizLength)
-
-            # Display question and answer options
-            print("Question ", currentQuestionNumber, ": ",  currentQuestion[0], sep="")
-
-            print("A.", currentQuestion[1])
-            print("B.", currentQuestion[2])
-            ## Only display option C if the question is not true/false
-            if currentQuestion[3] != "":
-                print("C.", currentQuestion[3])
-
-            # Get user answer
-            userAnswer = input("Answer (A, B, or, C): ").lower()
-
-            ## Validate user answer
-            while userAnswer not in ('a', 'b', 'c'):
-                userAnswer = input("Invalid answer. Please enter A, B, or C: ").lower()
-
-            #store valid answer in answer history
-            answerHistory.append(userAnswer)
-
-            ## CHECK IF ANSWER IS CORRECT
-            if validateAnswer(currentQuestion, userAnswer):
-                # increment score
-                if quizLength == 10:
-                    score += 1
-                elif quizLength == 20:
-                    score += 0.5
-                print("Correct!")
-            else:
-                print("Incorrect. The correct answer is ", currentQuestion[4], ".", sep="")
-
-            # separate questions
-            print("")
+        ## RUN THE QUIZ
+        # pass any needed info and return it
+        elapsedTime, score, questionList, answerHistory = askQuestions(startTime, timeLimit, elapsedTime, quizLength, DEFAULT_NUM_OF_QUESTIONS, score, questionList, answerHistory)
 
         ## STORE RESULTS
         storeResults(userFirst, userLast, userID, score, quizLength, questionList, answerHistory, elapsedTime, DEFAULT_NUM_OF_QUESTIONS)#vars for implementing store results: userFirst, userLast, userID, score, quizLength, questionList, answerHistory, elapsedTime, DEFAULT_NUM_OF_QUESTIONS
@@ -86,6 +52,10 @@ def main():
         ## ALLOW THE USER TO QUIT OR RESTART THE QUIZ WITH NEW QUESTIONS
         status = input("Type 'Q' to quit and 'R' to restart the quiz:")
 
+        while status.lower() != 'q' and status.lower() != 'r':
+            print("Invalid choice.")
+            status = input("Type 'Q' to quit and 'R' to restart the quiz:")
+
         if status.lower() == 'q':
             playing = 'n'
             print("Thanks for playing!")
@@ -93,6 +63,55 @@ def main():
             #restart quiz
             print("NEW QUIZ!")
 
+
+
+def askQuestions(startTime, timeLimit, elapsedTime, quizLength, DEFAULT_NUM_OF_QUESTIONS, score, questionList, answerHistory):
+    """
+    Takes basic quiz information, asks the user the quis questions, and returns the results of the quiz to be processed.
+    """
+    for i in range(1, quizLength + 1):
+        # Time limit
+        elapsedTime = time.time() - startTime
+        if elapsedTime >= timeLimit:
+            print("Time limit exceeded.\n")
+            break
+        currentQuestionNumber = i
+        ## Get questions one at a time
+        currentQuestion, questionList = getQuestion(currentQuestionNumber, questionList, quizLength)
+
+        # Display question and answer options
+        print("Question ", currentQuestionNumber, ": ", currentQuestion[0], sep="")
+
+        print("A.", currentQuestion[1])
+        print("B.", currentQuestion[2])
+        ## Only display option C if the question is not true/false
+        if currentQuestion[3] != "":
+            print("C.", currentQuestion[3])
+
+        # Get user answer
+        userAnswer = input("Answer (A, B, or, C): ").lower()
+
+        ## Validate user answer
+        while userAnswer not in ('a', 'b', 'c'):
+            userAnswer = input("Invalid answer. Please enter A, B, or C: ").lower()
+
+        # store valid answer in answer history
+        answerHistory.append(userAnswer)
+
+        ## CHECK IF ANSWER IS CORRECT
+        if validateAnswer(currentQuestion, userAnswer):
+            # increment score based off quiz length
+            if quizLength == 10:
+                score += 1
+            elif quizLength == 20:
+                score += 0.5
+            print("Correct!")
+        else:
+            print("Incorrect. The correct answer is ", currentQuestion[4], ".", sep="")
+
+        # separate questions
+        print("")
+    return elapsedTime, score, questionList, answerHistory
 
 def getUserInfo():
     """Collects the user's first name, last name, and validated school ID."""
@@ -117,6 +136,10 @@ def validateInfo(userID):
     return userID
 
 def getQuestion(currentQuestionNumber, questionList, quizLength):
+    """
+    Returns one question at a time from a generated list of defined questions.
+    May request a new list of questions if a new quiz has started.
+    """
     questions = questionList
     questionNum = currentQuestionNumber - 1
     #only get new questions for a new quiz, otherwise keep the same questions
@@ -128,6 +151,9 @@ def getQuestion(currentQuestionNumber, questionList, quizLength):
 
 
 def genQuestions(requestedQuestionCount):
+    """
+    Generates a list of unique questions based off of the number of questions requested.
+    """
     questions = []
     randomQuestions = []
     # open the csv file and read the questions
