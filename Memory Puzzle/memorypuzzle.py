@@ -45,6 +45,11 @@ ALLCOLORS = (RED, GREEN, BLUE, YELLOW, ORANGE, PURPLE, CYAN)
 ALLSHAPES = (DONUT, SQUARE, DIAMOND, LINES, OVAL)
 assert len(ALLCOLORS) * len(ALLSHAPES) * 2 >= BOARDWIDTH * BOARDHEIGHT, "Board is too big for the number of shapes/colors defined."
 
+## SET THE BACKGROUND IMAGE
+BACK_IMAGE = pygame.image.load('background.png')
+## SCALE THE BACKGROUND IMAGE TO FIT THE WINDOW
+BACK_IMAGE = pygame.transform.scale(BACK_IMAGE, (WINDOWWIDTH, WINDOWHEIGHT))
+
 def main():
     global FPSCLOCK, DISPLAYSURF
     pygame.init()
@@ -66,13 +71,20 @@ def main():
 
     firstSelection = None # stores the (x, y) of the first box clicked.
 
-    DISPLAYSURF.fill(BGCOLOR)
+    #DISPLAYSURF.fill(BGCOLOR)
+    ## Instead of using a color use the image as the background
+    # at location (0, 0) which is the top left corner of the window
+    DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
+
     startGameAnimation(mainBoard)
 
     while True: # main game loop
         mouseClicked = False
 
-        DISPLAYSURF.fill(BGCOLOR) # drawing the window
+        #DISPLAYSURF.fill(BGCOLOR) # drawing the window
+        ## Instead of using a color use the image as the background
+        # at location (0, 0) which is the top left corner of the window
+        DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
         drawBoard(mainBoard, revealedBoxes)
 
         for event in pygame.event.get(): # event handling loop
@@ -84,6 +96,10 @@ def main():
             elif event.type == MOUSEBUTTONUP:
                 mousex, mousey = event.pos
                 mouseClicked = True
+            ## if the user presses the "x" key, reveal a random box for a moment
+            # pass in the current game board and the currently revealed boxes to the revealABox function
+            elif event.type == KEYDOWN and event.key == K_x:
+                revealABox(mainBoard, revealedBoxes)
 
         boxx, boxy = getBoxAtPixel(mousex, mousey)
         if boxx != None and boxy != None:
@@ -293,6 +309,24 @@ def hasWon(revealedBoxes):
             return False # return False if any boxes are covered.
     return True
 
+## Revel a random box for a moment.
+# reference startGameAnimation
+# pass in the current game board and the currently revealed boxes
+# revealedBoxes is an array of booleans
+def revealABox(board, revealedBoxes):
+
+    ## Pick a random box to reveal
+    boxToReveal = random.randint(0, BOARDWIDTH - 1), random.randint(0, BOARDHEIGHT - 1)
+
+    # if boxToReveal is already revealed, keep picking a random box until an unrevealed box is found
+    while revealedBoxes[boxToReveal[0]][boxToReveal[1]]:
+        boxToReveal = random.randint(0, BOARDWIDTH - 1), random.randint(0, BOARDHEIGHT - 1)
+
+    # reveal the box at the location of boxToReveal
+    revealBoxesAnimation(board, [boxToReveal])
+    # cover the box after it has been revealed
+    coverBoxesAnimation(board, [boxToReveal])
+    return
 
 if __name__ == '__main__':
     main()

@@ -3,7 +3,8 @@ import csv, random, time
 def main():
     playing = 'y'
 
-    NUMBER_OF_QUESTIONS = 10
+    DEFAULT_NUM_OF_QUESTIONS = 10
+    quizLength = 10
 
 
     while playing != 'n':
@@ -12,6 +13,17 @@ def main():
         timeLimit = 600
         elapsedTime = 0
         score=0
+
+        ## HAVE THE USER SELECT A 10 or 20 QUESTION QUIZ
+        quizLength = input("How many questions would you like answer? Type '10' or '20': ")
+
+        # check for an invalid answer and fix it.
+        while quizLength != "10" and quizLength != "20":
+            print("Invalid number of questions selected!", type(quizLength))
+            quizLength = input("How many questions would you like answer? Type '10' or '20': ")
+
+        # cast user input to an int
+        quizLength = int(quizLength)
 
         ## GET USER INFO
         userFirst, userLast, userID = getUserInfo()
@@ -22,7 +34,7 @@ def main():
         #Store valid answers given by the user
         answerHistory = []
 
-        for i in range(1,NUMBER_OF_QUESTIONS + 1):
+        for i in range(1,quizLength + 1):
             #Time limit
             elapsedTime = time.time() - startTime
             if elapsedTime >= timeLimit:
@@ -30,7 +42,7 @@ def main():
                 break
             currentQuestionNumber = i
             ## Get questions one at a time
-            currentQuestion, questionList = getQuestion(currentQuestionNumber, questionList)
+            currentQuestion, questionList = getQuestion(currentQuestionNumber, questionList, quizLength)
 
             # Display question and answer options
             print("Question ", currentQuestionNumber, ": ",  currentQuestion[0], sep="")
@@ -54,7 +66,10 @@ def main():
             ## CHECK IF ANSWER IS CORRECT
             if validateAnswer(currentQuestion, userAnswer):
                 # increment score
-                score += 1
+                if quizLength == 10:
+                    score += 1
+                elif quizLength == 20:
+                    score += 0.5
                 print("Correct!")
             else:
                 print("Incorrect. The correct answer is ", currentQuestion[4], ".", sep="")
@@ -63,10 +78,10 @@ def main():
             print("")
 
         ## STORE RESULTS
-        storeResults(userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime)#vars for implementing store results: userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime
+        storeResults(userFirst, userLast, userID, score, quizLength, questionList, answerHistory, elapsedTime, DEFAULT_NUM_OF_QUESTIONS)#vars for implementing store results: userFirst, userLast, userID, score, quizLength, questionList, answerHistory, elapsedTime, DEFAULT_NUM_OF_QUESTIONS
 
         ## PRINT TEST RESULTS
-        print("Quiz complete! Your score is ", score, "/", NUMBER_OF_QUESTIONS, ".", sep="")
+        print("Quiz complete! Your score is ", score, "/", DEFAULT_NUM_OF_QUESTIONS, ".", sep="")
 
         ## ALLOW THE USER TO QUIT OR RESTART THE QUIZ WITH NEW QUESTIONS
         status = input("Type 'Q' to quit and 'R' to restart the quiz:")
@@ -80,18 +95,17 @@ def main():
 
 
 def getUserInfo():
-    """Collects the user's first name, last name, and validated school ID."""
-    userFirst = input("Hello and welcome, please enter your first name below: \n")
-    userLast = input("Please enter your last name: \n")
-    userID = input("And finally, what is your School ID?: \n")
+
+    userFirst = str(input("Hello and welcome, please enter your first name below: \n"))
+    userLast = str(input("Please enter your last name: \n"))
+    userID = input("And finally, what is your School ID? (A00000): \n")
     userID = validateInfo(userID)
     print('Hello ' + userFirst + ' ' + userLast + ' Welcome to the quiz, Good Luck!')
-    print('=' * 80)
+    print('=' * 60)
     pass
     return userFirst, userLast, userID
 
 def validateInfo(userID):
-    """Validates the school ID format (A + 5 digits, first digit 1–9)."""
     while not (
         len(userID) == 6 and
         userID[0].upper() == 'A' and
@@ -100,14 +114,13 @@ def validateInfo(userID):
     ):
         userID = input('Invalid User ID, Please Try again: ')
     return userID
-    #print("placeholder")
 
-def getQuestion(currentQuestionNumber, questionList):
+def getQuestion(currentQuestionNumber, questionList, quizLength):
     questions = questionList
     questionNum = currentQuestionNumber - 1
     #only get new questions for a new quiz, otherwise keep the same questions
     if questionNum == 0:
-        questions = genQuestions(10)
+        questions = genQuestions(quizLength)
 
     return questions[questionNum], questions
 
@@ -141,15 +154,15 @@ def validateAnswer(currentQuestion, userAnswer):
 
 
 
-def storeResults(userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime):#vars for implementing store results: userFirst, userLast, userID, score, NUMBER_OF_QUESTIONS, questionList, answerHistory, elapsedTime
-    """Saves the quiz results into a text file"""                  #i just put whatever as a placeholder
+def storeResults(userFirst, userLast, userID, score, quizLength, questionList, answerHistory, elapsedTime, DEFAULT_NUM_OF_QUESTIONS):#vars for implementing store results: userFirst, userLast, userID, score, quizLength, questionList, answerHistory, elapsedTime, DEFAULT_NUM_OF_QUESTIONS
+    """Saves the quiz results into a text file"""
 
     results = str((userID + "_" + userFirst + "_" + userLast + ".txt"))
 
     with open(results, "w") as save:
         save.write(f"Student ID: {userID}\n")
         save.write(f"Name: {userFirst} {userLast}\n")
-        save.write(f"Score: {score}/{NUMBER_OF_QUESTIONS}\n")
+        save.write(f"Score: {score}/{DEFAULT_NUM_OF_QUESTIONS}\n")
         save.write(f"Elapsed Time: {round(elapsedTime,2)} seconds\n")
 
         for i in range(len(answerHistory)):

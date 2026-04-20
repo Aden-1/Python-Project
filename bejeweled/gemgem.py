@@ -66,6 +66,11 @@ RIGHT = 'right'
 EMPTY_SPACE = -1 # an arbitrary, nonpositive value
 ROWABOVEBOARD = 'row above board' # an arbitrary, noninteger value
 
+## SET THE BACKGROUND IMAGE
+BACK_IMAGE = pygame.image.load('background.png')
+## SCALE THE BACKGROUND IMAGE TO FIT THE WINDOW
+BACK_IMAGE = pygame.transform.scale(BACK_IMAGE, (WINDOWWIDTH, WINDOWHEIGHT))
+
 def main():
     global FPSCLOCK, DISPLAYSURF, GEMIMAGES, GAMESOUNDS, BASICFONT, BOARDRECTS
 
@@ -150,6 +155,14 @@ def runGame():
             elif event.type == MOUSEBUTTONDOWN:
                 # this is the start of a mouse click or mouse drag
                 lastMouseDownX, lastMouseDownY = event.pos
+            ## If the player presses the X key, remove a random 3x3 square from the board
+            elif event.type == KEYDOWN and event.key == K_x:
+                # pass the current game board to the function
+                removeRandom3x3(gameBoard)
+                # use the fill and animate function to update the board with new gems
+                # after the 3x3 square is removed
+                # pass the current gameboard, an empty list for points awarded since zero are added, and the current score
+                fillBoardAndAnimate(gameBoard, [], score)
 
         if clickedSpace and not firstSelectedGem:
             # This was the first gem clicked on.
@@ -210,7 +223,12 @@ def runGame():
                 gameIsOver = True
 
         # Draw the board.
-        DISPLAYSURF.fill(BGCOLOR)
+        #DISPLAYSURF.fill(BGCOLOR)
+
+        ## Instead of using a color use the image as the background
+        # at location (0, 0) which is the top left corner of the window
+        DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
+
         drawBoard(gameBoard)
         if firstSelectedGem != None:
             highlightSpace(firstSelectedGem['x'], firstSelectedGem['y'])
@@ -229,7 +247,6 @@ def runGame():
         drawScore(score)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
-
 
 def getSwappingGems(board, firstXY, secondXY):
     # If the gems at the (X, Y) coordinates of the two gems are adjacent,
@@ -445,7 +462,12 @@ def animateMovingGems(board, gems, pointsText, score):
     # pointsText is a dictionary with keys 'x', 'y', and 'points'
     progress = 0 # progress at 0 represents beginning, 100 means finished.
     while progress < 100: # animation loop
-        DISPLAYSURF.fill(BGCOLOR)
+        #DISPLAYSURF.fill(BGCOLOR)
+
+        ## Instead of using a color use the image as the background
+        # at location (0, 0) which is the top left corner of the window
+        DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
+
         drawBoard(board)
         for gem in gems: # Draw each gem.
             drawMovingGem(gem, progress)
@@ -543,6 +565,22 @@ def drawScore(score):
     scoreRect = scoreImg.get_rect()
     scoreRect.bottomleft = (10, WINDOWHEIGHT - 6)
     DISPLAYSURF.blit(scoreImg, scoreRect)
+
+## Remove a random 3x3 square from the board.
+# Will always remove 9 spaces, does not affect the score.
+def removeRandom3x3(board):
+    # prick a random location on the board that is 3 spaces away from the edge on both the x-axis and y-axis
+    randomX = random.randint(0, BOARDWIDTH - 3)
+    randomY = random.randint(0, BOARDHEIGHT - 3)
+
+    # for every space +3 on the x-axis and +3 on the y-axis
+    for x in range(randomX, randomX + 3):
+        for y in range(randomY, randomY + 3):
+
+            # as long as the space is within the bounds of the board, set it to empty space
+            # (0,0) is top left corner of the board, so the x and y values must be between 0 and the width/height of the board
+            if 0 <= x < BOARDWIDTH and 0 <= y < BOARDHEIGHT:
+                board[x][y] = EMPTY_SPACE
 
 
 if __name__ == '__main__':
