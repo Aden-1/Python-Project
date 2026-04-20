@@ -67,7 +67,10 @@ EMPTY_SPACE = -1 # an arbitrary, nonpositive value
 ROWABOVEBOARD = 'row above board' # an arbitrary, noninteger value
 
 ## SET THE BACKGROUND IMAGE
-BACK_IMAGE = pygame.image.load('background.png')
+try:
+    BACK_IMAGE = pygame.image.load('background.png')
+except Exception:
+    sys.exit("The background image is missing.")
 ## SCALE THE BACKGROUND IMAGE TO FIT THE WINDOW
 BACK_IMAGE = pygame.transform.scale(BACK_IMAGE, (WINDOWWIDTH, WINDOWHEIGHT))
 

@@ -12,8 +12,8 @@ WINDOWHEIGHT = 480 # size of windows' height in pixels
 REVEALSPEED = 2 # speed boxes' sliding reveals and covers #NAD CHANGE TO MAKE SLOWER
 BOXSIZE = 40 # size of box height & width in pixels
 GAPSIZE = 10 # size of gap between boxes in pixels
-BOARDWIDTH = 6 # number of columns of icons #NAD CHANGE TO SMALLER SIZE
-BOARDHEIGHT = 6 # number of rows of icons #NAD CHANGE TO SMALLER (HAS TO BE EVEN)
+BOARDWIDTH = 4 # number of columns of icons #NAD CHANGE TO SMALLER SIZE
+BOARDHEIGHT = 4 # number of rows of icons #NAD CHANGE TO SMALLER (HAS TO BE EVEN)
 assert (BOARDWIDTH * BOARDHEIGHT) % 2 == 0, 'Board needs to have an even number of boxes for pairs of matches.'
 XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * (BOXSIZE + GAPSIZE))) / 2)
 YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * (BOXSIZE + GAPSIZE))) / 2)
@@ -46,7 +46,10 @@ ALLSHAPES = (DONUT, SQUARE, DIAMOND, LINES, OVAL)
 assert len(ALLCOLORS) * len(ALLSHAPES) * 2 >= BOARDWIDTH * BOARDHEIGHT, "Board is too big for the number of shapes/colors defined."
 
 ## SET THE BACKGROUND IMAGE
-BACK_IMAGE = pygame.image.load('background.png')
+try:
+    BACK_IMAGE = pygame.image.load('background.png')
+except Exception:
+    sys.exit("The background image is missing.")
 ## SCALE THE BACKGROUND IMAGE TO FIT THE WINDOW
 BACK_IMAGE = pygame.transform.scale(BACK_IMAGE, (WINDOWWIDTH, WINDOWHEIGHT))
 
@@ -134,6 +137,9 @@ def main():
                         drawBoard(mainBoard, revealedBoxes)
                         pygame.display.update()
                         pygame.time.wait(1000)
+
+                        ## SET THE BACKGROUND BACK TO THE IMAGES AFTER THE USER HAS WON
+                        DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
 
                         # Replay the start game animation.
                         startGameAnimation(mainBoard)
@@ -291,8 +297,9 @@ def startGameAnimation(board):
 def gameWonAnimation(board):
     # flash the background color when the player has won
     coveredBoxes = generateRevealedBoxesData(True)
-    color1 = LIGHTBGCOLOR
-    color2 = BGCOLOR
+    ## CHANGED WITH WINNING COLORS THAT FLASH TO BETTER MATCH THE BACKGROUND
+    color1 = NAVYBLUE
+    color2 = GRAY
 
     for i in range(13):
         color1, color2 = color2, color1 # swap colors
