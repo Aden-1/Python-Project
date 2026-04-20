@@ -95,17 +95,18 @@ def main():
 
 
 def getUserInfo():
-
-    userFirst = str(input("Hello and welcome, please enter your first name below: \n"))
-    userLast = str(input("Please enter your last name: \n"))
+    """Collects the user's first name, last name, and validated school ID."""
+    userFirst = input("Hello and welcome, please enter your first name below: \n")
+    userLast = input("Please enter your last name: \n")
     userID = input("And finally, what is your School ID? (A00000): \n")
     userID = validateInfo(userID)
     print('Hello ' + userFirst + ' ' + userLast + ' Welcome to the quiz, Good Luck!')
-    print('=' * 60)
+    print('=' * 80)
     pass
     return userFirst, userLast, userID
 
 def validateInfo(userID):
+    """Validates the school ID format (A + 5 digits, first digit 1–9)."""
     while not (
         len(userID) == 6 and
         userID[0].upper() == 'A' and
