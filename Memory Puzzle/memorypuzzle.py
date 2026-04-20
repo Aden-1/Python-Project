@@ -319,7 +319,8 @@ def revealABox(board, revealedBoxes):
     boxToReveal = random.randint(0, BOARDWIDTH - 1), random.randint(0, BOARDHEIGHT - 1)
 
     # if boxToReveal is already revealed, keep picking a random box until an unrevealed box is found
-    while revealedBoxes[boxToReveal[0]][boxToReveal[1]]:
+    # and the board is not cleared
+    while revealedBoxes[boxToReveal[0]][boxToReveal[1]] and not hasWon(revealedBoxes):
         boxToReveal = random.randint(0, BOARDWIDTH - 1), random.randint(0, BOARDHEIGHT - 1)
 
     # reveal the box at the location of boxToReveal

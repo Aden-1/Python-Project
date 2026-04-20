@@ -89,11 +89,19 @@ def askQuestions(startTime, timeLimit, elapsedTime, quizLength, DEFAULT_NUM_OF_Q
             print("C.", currentQuestion[3])
 
         # Get user answer
-        userAnswer = input("Answer (A, B, or, C): ").lower()
+        if currentQuestion[3] == "":
+            userAnswer = input("Answer (A or B): ").lower()
+        else:
+            userAnswer = input("Answer (A, B, or, C): ").lower()
 
         ## Validate user answer
-        while userAnswer not in ('a', 'b', 'c'):
-            userAnswer = input("Invalid answer. Please enter A, B, or C: ").lower()
+        if currentQuestion[3] != "":
+            while userAnswer not in ('a', 'b', 'c') and currentQuestion[3] != "":
+                userAnswer = input("Invalid answer. Please enter A, B, or C: ").lower()
+        if currentQuestion[3] == "":
+            while userAnswer not in ('a', 'b'):
+                    userAnswer = input("Invalid answer. Please enter A or B: ").lower()
+
 
         # store valid answer in answer history
         answerHistory.append(userAnswer)
@@ -196,7 +204,19 @@ def storeResults(userFirst, userLast, userID, score, quizLength, questionList, a
             question = questionList[i] #loops through the answers the student entered and outputs it.
             save.write(f"Question{i+1}: {question[0]}\n")
             save.write(f"Correct Answer: {question[4]}\n")
+            if question[4] == "a":
+                save.write(f"Correct Answer Text: {question[1]}\n")
+            elif question[4] == "b":
+                save.write(f"Correct Answer Text: {question[2]}\n")
+            else:
+                save.write(f"Correct Answer Text: {question[3]}\n")
             save.write(f"Your Answer: {answerHistory[i]}\n")
+            if answerHistory[i] == "a":
+                save.write(f"Your answer text: {question[1]}\n")
+            elif answerHistory[i] == "b":
+                save.write(f"Your answer text: {question[2]}\n")
+            else:
+                save.write(f"Your answer text: {question[3]}\n")
 
     print("Results saved.\n")
 
