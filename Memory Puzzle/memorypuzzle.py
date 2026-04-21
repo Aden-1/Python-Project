@@ -98,11 +98,11 @@ def main():
 
         if not gameOver:
             # 'LH' Display current lives
-            livesText = font.render("Lives: " + str(3 - misses), True, WHITE)
+            livesText = font.render(f"Lives: {3 - misses}", True, BLACK)
             DISPLAYSURF.blit(livesText, (10, 10))
         else:
             # 'LH' Display game over message
-            gameOverText = font.render("Game Over. Press R to restart or Q to quit.", True, WHITE)
+            gameOverText = font.render("Game Over. Press R to restart or Q to quit.", True, BLACK)
             DISPLAYSURF.blit(gameOverText, (WINDOWWIDTH // 2 - 200, WINDOWHEIGHT // 2))
 
         for event in pygame.event.get(): # event handling loop

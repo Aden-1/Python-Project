@@ -149,7 +149,7 @@ def getUserInfo():
         except ValueError as e:
             print(e)
     # LH Get and validate school ID
-    userID = input("And finally, what is your School ID? (A00000): \n").upper()
+    userID = input("And finally, what is your School ID? (A00000): \n")
     print(userID)
     userID = validateInfo(userID)
     if userID is None:
@@ -165,16 +165,16 @@ def validateInfo(userID):
     # LH Validates the school ID format (A + 5 digits, first digit 1–9).
     attempts = 0
     while not (
-        len(userID) == 6 and
-        userID[0].upper() == 'A' and
-        userID[1] in '123456789' and
-        userID[2:].isdigit()
+            len(userID) == 6 and
+            userID[0] == 'A' and
+            userID[1] in '123456789' and
+            all(ch in '123456789' for ch in userID[2:])
     ):
         attempts += 1
         if attempts >= 3:
             # LH Return None after 3 failed attempts
             return None
-        userID = input('Invalid User ID, Please Try again: ').upper()
+        userID = input('Invalid User ID, Please Try again: ')
         print(userID)
     return userID
 
