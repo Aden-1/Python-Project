@@ -129,25 +129,53 @@ def askQuestions(startTime, timeLimit, elapsedTime, quizLength, DEFAULT_NUM_OF_Q
     return elapsedTime, score, questionList, answerHistory
 
 def getUserInfo():
-    """Collects the user's first name, last name, and validated school ID."""
-    userFirst = input("Hello and welcome, please enter your first name below: \n")
-    userLast = input("Please enter your last name: \n")
-    userID = input("And finally, what is your School ID? (A00000): \n")
+    # LH Collects the user's first name, last name, and validated school ID.
+    while True:
+        try:
+            # LH Get first name and validate it's alphabetic
+            userFirst = input("Hello and welcome, please enter your first name below: \n")
+            if not userFirst.isalpha():
+                raise ValueError("Invalid first name. Please enter only letters (no numbers or special characters).")
+            break
+        except ValueError as e:
+            print(e)
+    while True:
+        try:
+            # LH Get last name and validate it's alphabetic
+            userLast = input("Please enter your last name: \n")
+            if not userLast.isalpha():
+                raise ValueError("Invalid last name. Please enter only letters (no numbers or special characters).")
+            break
+        except ValueError as e:
+            print(e)
+    # LH Get and validate school ID
+    userID = input("And finally, what is your School ID? (A00000): \n").upper()
+    print(userID)
     userID = validateInfo(userID)
+    if userID is None:
+        # LH Exit if too many invalid ID attempts
+        print("Too many invalid attempts for school ID. Exiting program.")
+        sys.exit()
     print('Hello ' + userFirst + ' ' + userLast + ' Welcome to the quiz, Good Luck!')
     print('=' * 80)
     pass
     return userFirst, userLast, userID
 
 def validateInfo(userID):
-    """Validates the school ID format (A + 5 digits, first digit 1–9)."""
+    # LH Validates the school ID format (A + 5 digits, first digit 1–9).
+    attempts = 0
     while not (
         len(userID) == 6 and
         userID[0].upper() == 'A' and
         userID[1] in '123456789' and
         userID[2:].isdigit()
     ):
-        userID = input('Invalid User ID, Please Try again: ')
+        attempts += 1
+        if attempts >= 3:
+            # LH Return None after 3 failed attempts
+            return None
+        userID = input('Invalid User ID, Please Try again: ').upper()
+        print(userID)
     return userID
 
 def getQuestion(currentQuestionNumber, questionList, quizLength):

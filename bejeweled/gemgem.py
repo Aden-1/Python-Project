@@ -131,9 +131,15 @@ def runGame():
     gameIsOver = False
     lastScoreDeduction = time.time()
     clickContinueTextSurf = None
+    hintGems = None  # stores the two gems to highlight for hint
 
     while True: # main game loop
-        clickedSpace = None
+        mouseClicked = False
+        clickedSpace = None  # initialize clickedSpace
+
+        DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
+        drawBoard(gameBoard)
+
         for event in pygame.event.get(): # event handling loop
             if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
                 pygame.quit()
@@ -167,10 +173,14 @@ def runGame():
                 # after the 3x3 square is removed
                 # pass the current gameboard, an empty list for points awarded since zero are added, and the current score
                 fillBoardAndAnimate(gameBoard, [], score)
+            # 'LH' Handle hint key press to show possible move
+            elif event.type == KEYDOWN and event.key == K_h:
+                hintGems = getHint(gameBoard)
 
         if clickedSpace and not firstSelectedGem:
             # This was the first gem clicked on.
             firstSelectedGem = clickedSpace
+            hintGems = None  # clear hint when selecting
         elif clickedSpace and firstSelectedGem:
             # Two gems have been clicked on and selected. Swap the gems.
             firstSwappingGem, secondSwappingGem = getSwappingGems(gameBoard, firstSelectedGem, clickedSpace)
@@ -222,20 +232,21 @@ def runGame():
                     # Check if there are any new matches.
                     matchedGems = findMatchingGems(gameBoard)
             firstSelectedGem = None
+            hintGems = None  # clear hint after move
 
             if not canMakeMove(gameBoard):
                 gameIsOver = True
 
         # Draw the board.
-        #DISPLAYSURF.fill(BGCOLOR)
-
-        ## Instead of using a color use the image as the background
-        # at location (0, 0) which is the top left corner of the window
         DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
 
         drawBoard(gameBoard)
         if firstSelectedGem != None:
             highlightSpace(firstSelectedGem['x'], firstSelectedGem['y'])
+        # 'LH' Highlight hint gems if any are suggested
+        if hintGems:
+            highlightSpace(hintGems[0], hintGems[1])
+            highlightSpace(hintGems[2], hintGems[3])
         if gameIsOver:
             if clickContinueTextSurf == None:
                 # Only render the text once. In future iterations, just
@@ -587,5 +598,32 @@ def removeRandom3x3(board):
                 board[x][y] = EMPTY_SPACE
 
 
-if __name__ == '__main__':
+# 'LH' Find two adjacent gems that can be swapped for a match.
+# Returns the coordinates of the two gems, or None if no match is possible.
+def getHint(board):
+    for x in range(BOARDWIDTH):
+        for y in range(BOARDHEIGHT):
+            # Try swapping with right neighbor
+            if x < BOARDWIDTH - 1:
+                # Swap
+                board[x][y], board[x+1][y] = board[x+1][y], board[x][y]
+                if findMatchingGems(board):
+                    # Swap back
+                    board[x][y], board[x+1][y] = board[x+1][y], board[x][y]
+                    return (x, y, x+1, y)
+                # Swap back
+                board[x][y], board[x+1][y] = board[x+1][y], board[x][y]
+            # Try swapping with bottom neighbor
+            if y < BOARDHEIGHT - 1:
+                # Swap
+                board[x][y], board[x][y+1] = board[x][y+1], board[x][y]
+                if findMatchingGems(board):
+                    # Swap back
+                    board[x][y], board[x][y+1] = board[x][y+1], board[x][y]
+                    return (x, y, x, y+1)
+                # Swap back
+                board[x][y], board[x][y+1] = board[x][y+1], board[x][y]
+    return None
+
+if __name__ == "__main__":
     main()

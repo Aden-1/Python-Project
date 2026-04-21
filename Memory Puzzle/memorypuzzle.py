@@ -56,6 +56,8 @@ BACK_IMAGE = pygame.transform.scale(BACK_IMAGE, (WINDOWWIDTH, WINDOWHEIGHT))
 def main():
     global FPSCLOCK, DISPLAYSURF
     pygame.init()
+    # 'LH' Initialize font for displaying text
+    font = pygame.font.Font(None, 36)  # font for displaying text
 
     pygame.mixer.init()  # initialize sound system
     pygame.mixer.music.load("backgroundmusic.mp3")  #background music
@@ -73,6 +75,10 @@ def main():
     revealedBoxes = generateRevealedBoxesData(False)
 
     firstSelection = None # stores the (x, y) of the first box clicked.
+    # 'LH' Track consecutive misses for lives system
+    misses = 0  # track consecutive misses
+    # 'LH' Flag for game over state
+    gameOver = False  # flag for game over state
 
     #DISPLAYSURF.fill(BGCOLOR)
     ## Instead of using a color use the image as the background
@@ -90,6 +96,15 @@ def main():
         DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
         drawBoard(mainBoard, revealedBoxes)
 
+        if not gameOver:
+            # 'LH' Display current lives
+            livesText = font.render(f"Lives: {3 - misses}", True, WHITE)
+            DISPLAYSURF.blit(livesText, (10, 10))
+        else:
+            # 'LH' Display game over message
+            gameOverText = font.render("Game Over. Press R to restart or Q to quit.", True, WHITE)
+            DISPLAYSURF.blit(gameOverText, (WINDOWWIDTH // 2 - 200, WINDOWHEIGHT // 2))
+
         for event in pygame.event.get(): # event handling loop
             if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
                 pygame.quit()
@@ -103,47 +118,73 @@ def main():
             # pass in the current game board and the currently revealed boxes to the revealABox function
             elif event.type == KEYDOWN and event.key == K_x:
                 revealABox(mainBoard, revealedBoxes)
+            # 'LH' Handle restart or quit on game over
+            elif gameOver and event.type == KEYDOWN:
+                if event.key == K_r:
+                    # 'LH' Restart the game
+                    mainBoard = getRandomizedBoard()
+                    revealedBoxes = generateRevealedBoxesData(False)
+                    misses = 0
+                    gameOver = False
+                    firstSelection = None
+                    DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
+                    startGameAnimation(mainBoard)
+                elif event.key == K_q:
+                    pygame.quit()
+                    sys.exit()
 
-        boxx, boxy = getBoxAtPixel(mousex, mousey)
-        if boxx != None and boxy != None:
-            # The mouse is currently over a box.
-            if not revealedBoxes[boxx][boxy]:
-                drawHighlightBox(boxx, boxy)
-            if not revealedBoxes[boxx][boxy] and mouseClicked:
-                revealBoxesAnimation(mainBoard, [(boxx, boxy)])
-                revealedBoxes[boxx][boxy] = True # set the box as "revealed"
-                if firstSelection == None: # the current box was the first box clicked
-                    firstSelection = (boxx, boxy)
-                else: # the current box was the second box clicked
-                    # Check if there is a match between the two icons.
-                    icon1shape, icon1color = getShapeAndColor(mainBoard, firstSelection[0], firstSelection[1])
-                    icon2shape, icon2color = getShapeAndColor(mainBoard, boxx, boxy)
+        if not gameOver:
+            boxx, boxy = getBoxAtPixel(mousex, mousey)
+            if boxx != None and boxy != None:
+                # The mouse is currently over a box.
+                if not revealedBoxes[boxx][boxy]:
+                    drawHighlightBox(boxx, boxy)
+                if not revealedBoxes[boxx][boxy] and mouseClicked:
+                    revealBoxesAnimation(mainBoard, [(boxx, boxy)])
+                    revealedBoxes[boxx][boxy] = True # set the box as "revealed"
+                    if firstSelection == None: # the current box was the first box clicked
+                        firstSelection = (boxx, boxy)
+                    else: # the current box was the second box clicked
+                        # Check if there is a match between the two icons.
+                        icon1shape, icon1color = getShapeAndColor(mainBoard, firstSelection[0], firstSelection[1])
+                        icon2shape, icon2color = getShapeAndColor(mainBoard, boxx, boxy)
 
-                    if icon1shape != icon2shape or icon1color != icon2color:
-                        # Icons don't match. Re-cover up both selections.
-                        pygame.time.wait(1000) # 1000 milliseconds = 1 sec
-                        coverBoxesAnimation(mainBoard, [(firstSelection[0], firstSelection[1]), (boxx, boxy)])
-                        revealedBoxes[firstSelection[0]][firstSelection[1]] = False
-                        revealedBoxes[boxx][boxy] = False
-                    elif hasWon(revealedBoxes): # check if all pairs found
-                        gameWonAnimation(mainBoard)
-                        pygame.time.wait(2000)
+                        if icon1shape != icon2shape or icon1color != icon2color:
+                            # Icons don't match. Re-cover up both selections.
+                            # 'LH' Increment misses on mismatch
+                            misses += 1
+                            if misses == 3:
+                                # 'LH' Set game over if 3 misses
+                                gameOver = True
+                            pygame.time.wait(1000) # 1000 milliseconds = 1 sec
+                            coverBoxesAnimation(mainBoard, [(firstSelection[0], firstSelection[1]), (boxx, boxy)])
+                            revealedBoxes[firstSelection[0]][firstSelection[1]] = False
+                            revealedBoxes[boxx][boxy] = False
+                        else:
+                            # Match found, reset misses
+                            # 'LH' Reset misses on match
+                            misses = 0
+                            if hasWon(revealedBoxes): # check if all pairs found
+                                gameWonAnimation(mainBoard)
+                                pygame.time.wait(2000)
 
-                        # Reset the board
-                        mainBoard = getRandomizedBoard()
-                        revealedBoxes = generateRevealedBoxesData(False)
+                                # Reset the board
+                                mainBoard = getRandomizedBoard()
+                                revealedBoxes = generateRevealedBoxesData(False)
+                                # 'LH' Reset misses on win
+                                misses = 0  # reset misses on win
 
-                        # Show the fully unrevealed board for a second.
-                        drawBoard(mainBoard, revealedBoxes)
-                        pygame.display.update()
-                        pygame.time.wait(1000)
+                                # Show the fully unrevealed board for a second.
+                                drawBoard(mainBoard, revealedBoxes)
+                                pygame.display.update()
+                                pygame.time.wait(1000)
 
-                        ## SET THE BACKGROUND BACK TO THE IMAGES AFTER THE USER HAS WON
-                        DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
+                                ## SET THE BACKGROUND BACK TO THE IMAGES AFTER THE USER HAS WON
+                                DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
 
-                        # Replay the start game animation.
-                        startGameAnimation(mainBoard)
-                    firstSelection = None # reset firstSelection variable
+                                # Replay the start game animation.
+                                startGameAnimation(mainBoard)
+                        firstSelection = None # reset firstSelection variable
 
         # Redraw the screen and wait a clock tick.
         pygame.display.update()
