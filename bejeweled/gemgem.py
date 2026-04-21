@@ -137,6 +137,8 @@ def runGame():
         mouseClicked = False
         clickedSpace = None  # initialize clickedSpace
 
+        ## Instead of using a color use the image as the background
+        # at location (0, 0) which is the top left corner of the window
         DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
         drawBoard(gameBoard)
 
@@ -238,6 +240,8 @@ def runGame():
                 gameIsOver = True
 
         # Draw the board.
+        ## Instead of using a color use the image as the background
+        # at location (0, 0) which is the top left corner of the window
         DISPLAYSURF.blit(BACK_IMAGE, (0, 0))
 
         drawBoard(gameBoard)
