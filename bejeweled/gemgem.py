@@ -47,10 +47,10 @@ BLACK     = (  0,   0,   0)
 BROWN     = ( 85,  65,   0)
 HIGHLIGHTCOLOR = PURPLE # color of the selected gem's border
 BGCOLOR = LIGHTBLUE # background color on the screen
-GRIDCOLOR = BLUE # color of the game board
+GRIDCOLOR = (255, 255, 255) # color of the game board
 GAMEOVERCOLOR = RED # color of the "Game over" text.
 GAMEOVERBGCOLOR = BLACK # background color of the "Game over" text.
-SCORECOLOR = BROWN # color of the text for the player's score
+SCORECOLOR = (255, 255, 255) # color of the text for the player's score
 
 # The amount of space to the sides of the board to the edge of the window
 # is used several times, so calculate it once here and store in variables.
