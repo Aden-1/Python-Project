@@ -98,7 +98,7 @@ def main():
 
         if not gameOver:
             # 'LH' Display current lives
-            livesText = font.render(f"Lives: {3 - misses}", True, WHITE)
+            livesText = font.render("Lives: " + str(3 - misses), True, WHITE)
             DISPLAYSURF.blit(livesText, (10, 10))
         else:
             # 'LH' Display game over message
