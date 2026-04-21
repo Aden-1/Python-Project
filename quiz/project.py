@@ -1,4 +1,4 @@
-import csv, random, time
+import csv, random, time, sys
 
 def main():
     """
@@ -13,9 +13,11 @@ def main():
 
     while playing != 'n':
 
+        # init time vars
         startTime = time.time()
         timeLimit = 600
         elapsedTime = 0
+        # init score and temp quiz length
         score=0
         quizLength = 10
 
@@ -24,11 +26,15 @@ def main():
 
         # check for an invalid answer and fix it.
         while quizLength != "10" and quizLength != "20":
-            print("Invalid number of questions selected!", type(quizLength))
+            print("Invalid number of questions selected!")
             quizLength = input("How many questions would you like answer? Type '10' or '20': ")
 
         # cast user input to an int
-        quizLength = int(quizLength)
+        try:
+            quizLength = int(quizLength)
+        except ValueError:
+            print("Integer not input")
+            quizLength = input("How many questions would you like answer? Type '10' or '20': ")
 
         ## GET USER INFO
         userFirst, userLast, userID = getUserInfo()
@@ -50,16 +56,16 @@ def main():
         print("Quiz complete! Your score is ", score, "/", DEFAULT_NUM_OF_QUESTIONS, ".", sep="")
 
         ## ALLOW THE USER TO QUIT OR RESTART THE QUIZ WITH NEW QUESTIONS
-        status = input("Type 'Q' to quit and 'R' to restart the quiz:")
+        status = input("Type 'Q' to quit and 'S' to clear the quiz:")
 
-        while status.lower() != 'q' and status.lower() != 'r':
+        while status.lower() != 'q' and status.lower() != 's':
             print("Invalid choice.")
-            status = input("Type 'Q' to quit and 'R' to restart the quiz:")
+            status = input("Type 'Q' to quit and 'S' to clear the quiz:")
 
         if status.lower() == 'q':
             playing = 'n'
             print("Thanks for playing!")
-        elif status.lower() == 'r':
+        elif status.lower() == 's':
             #restart quiz
             print("NEW QUIZ!")
 
@@ -69,6 +75,7 @@ def askQuestions(startTime, timeLimit, elapsedTime, quizLength, DEFAULT_NUM_OF_Q
     """
     Takes basic quiz information, asks the user the quis questions, and returns the results of the quiz to be processed.
     """
+    ## For every item in the quiz
     for i in range(1, quizLength + 1):
         # Time limit
         elapsedTime = time.time() - startTime
@@ -148,12 +155,14 @@ def getQuestion(currentQuestionNumber, questionList, quizLength):
     Returns one question at a time from a generated list of defined questions.
     May request a new list of questions if a new quiz has started.
     """
+    # set the current questions to the question list passed
     questions = questionList
     questionNum = currentQuestionNumber - 1
     #only get new questions for a new quiz, otherwise keep the same questions
     if questionNum == 0:
         questions = genQuestions(quizLength)
 
+    # retun the current question in the list along with the question list (will request one for a new quiz)
     return questions[questionNum], questions
 
 
@@ -165,26 +174,35 @@ def genQuestions(requestedQuestionCount):
     questions = []
     randomQuestions = []
     # open the csv file and read the questions
-    with open('testbank.csv', 'r') as file:
-        reader = csv.reader(file)
-        next(reader)  # Skip the first line
-        # add all the questions to a list
-        for question in reader:
-            questions.append(question)
+    try:
+        with open('testbank.csv', 'r') as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip the first line
+            # add all the questions to a list
+            for question in reader:
+                questions.append(question)
+    except FileNotFoundError:
+        sys.exit("quizbank file is missing")
+
 
     questionCount = requestedQuestionCount
     questionCounter = 0
-    #randomly select 10 questions
+    #randomly select unique questions
     while questionCounter < questionCount:
         newQuestion = random.choice(questions)
         if newQuestion not in randomQuestions:
             randomQuestions.append(newQuestion)
             questionCounter += 1
 
+    # return the random questions
     return randomQuestions
 
 
 def validateAnswer(currentQuestion, userAnswer):
+    """
+    check if the answer selected is equal to the user's answer return a bool value
+    """
+    # check if the answer selected is equal to the correct answer
     return currentQuestion[4].lower() == userAnswer
 
 
@@ -192,33 +210,39 @@ def validateAnswer(currentQuestion, userAnswer):
 def storeResults(userFirst, userLast, userID, score, quizLength, questionList, answerHistory, elapsedTime, DEFAULT_NUM_OF_QUESTIONS):#vars for implementing store results: userFirst, userLast, userID, score, quizLength, questionList, answerHistory, elapsedTime, DEFAULT_NUM_OF_QUESTIONS
     """Saves the quiz results into a text file"""
 
+    # Create the file name string
     results = str((userID + "_" + userFirst + "_" + userLast + ".txt"))
 
+    # open the file to save the results
     with open(results, "w") as save:
         save.write(f"Student ID: {userID}\n")
         save.write(f"Name: {userFirst} {userLast}\n")
         save.write(f"Score: {score}/{DEFAULT_NUM_OF_QUESTIONS}\n")
         save.write(f"Elapsed Time: {round(elapsedTime,2)} seconds\n")
+        save.write("\n")
 
-        for i in range(len(answerHistory)):
+        #for every question asked save it to the file
+        for i in range(quizLength):
+            save.write("\n")
             question = questionList[i] #loops through the answers the student entered and outputs it.
             save.write(f"Question{i+1}: {question[0]}\n")
-            save.write(f"Correct Answer: {question[4]}\n")
-            if question[4] == "a":
+            save.write(f"Correct Answer: {question[4].title()}\n")
+            if question[4].lower() == "a":
                 save.write(f"Correct Answer Text: {question[1]}\n")
-            elif question[4] == "b":
+            elif question[4].lower() == "b":
                 save.write(f"Correct Answer Text: {question[2]}\n")
             else:
                 save.write(f"Correct Answer Text: {question[3]}\n")
-            save.write(f"Your Answer: {answerHistory[i]}\n")
-            if answerHistory[i] == "a":
+            save.write(f"Your Answer: {answerHistory[i].title()}\n")
+            if answerHistory[i].lower() == "a":
                 save.write(f"Your answer text: {question[1]}\n")
-            elif answerHistory[i] == "b":
+            elif answerHistory[i].lower() == "b":
                 save.write(f"Your answer text: {question[2]}\n")
             else:
                 save.write(f"Your answer text: {question[3]}\n")
 
     print("Results saved.\n")
 
+# Run the main function if not imported
 if __name__ == "__main__":
     main()
