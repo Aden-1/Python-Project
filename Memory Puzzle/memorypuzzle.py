@@ -29,7 +29,7 @@ YELLOW   = (255, 255,   0)
 ORANGE   = (255, 128,   0)
 PURPLE   = (255,   0, 255)
 CYAN     = (  0, 255, 255)
-BLACK     = (0, 0, 0)
+BLACK    = (  0,   0,   0)
 
 BGCOLOR = NAVYBLUE
 LIGHTBGCOLOR = GRAY
@@ -99,7 +99,7 @@ def main():
 
         if not gameOver:
             # 'LH' Display current lives
-            livesText = font.render(f"Lives: {3 - misses}", True, BLACK)
+            livesText = font.render("Lives: " + str(3 - misses), True, BLACK)
             DISPLAYSURF.blit(livesText, (10, 10))
         else:
             # 'LH' Display game over message
