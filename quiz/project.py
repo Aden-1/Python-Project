@@ -129,7 +129,7 @@ def askQuestions(startTime, timeLimit, elapsedTime, quizLength, DEFAULT_NUM_OF_Q
     return elapsedTime, score, questionList, answerHistory
 
 def getUserInfo():
-    # LH Collects the user's first name, last name, and validated school ID.
+    """ LH Collects the user's first name, last name, and validated school ID."""
     while True:
         try:
             # LH Get first name and validate it's alphabetic
@@ -162,7 +162,7 @@ def getUserInfo():
     return userFirst, userLast, userID
 
 def validateInfo(userID):
-    # LH Validates the school ID format (A + 5 digits, first digit 1–9).
+    """ LH Validates the school ID format (A + 5 digits, first digit 1–9). """
     attempts = 0
     while not (
             len(userID) == 6 and
