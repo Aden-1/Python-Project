@@ -54,6 +54,7 @@ except Exception:
 ## SCALE THE BACKGROUND IMAGE TO FIT THE WINDOW
 BACK_IMAGE = pygame.transform.scale(BACK_IMAGE, (WINDOWWIDTH, WINDOWHEIGHT))
 
+### Initialize game and run the main game loop.
 def main():
     global FPSCLOCK, DISPLAYSURF
     pygame.init()
@@ -192,6 +193,7 @@ def main():
         FPSCLOCK.tick(FPS)
 
 
+### Create 2D array tracking which boxes are revealed or hidden.
 def generateRevealedBoxesData(val):
     revealedBoxes = []
     for i in range(BOARDWIDTH):
@@ -199,6 +201,7 @@ def generateRevealedBoxesData(val):
     return revealedBoxes
 
 
+### Generate a shuffled board with paired objects / images.
 def getRandomizedBoard():
     # Get a list of every possible shape in every possible color.
     icons = []
@@ -222,6 +225,7 @@ def getRandomizedBoard():
     return board
 
 
+### Divide a list into smaller sublists of specified size.
 def splitIntoGroupsOf(groupSize, theList):
     # splits a list into a list of lists, where the inner lists have at
     # most groupSize number of items.
@@ -231,6 +235,7 @@ def splitIntoGroupsOf(groupSize, theList):
     return result
 
 
+### Convert board coordinates to pixel coordinates on screen.
 def leftTopCoordsOfBox(boxx, boxy):
     # Convert board coordinates to pixel coordinates
     left = boxx * (BOXSIZE + GAPSIZE) + XMARGIN
@@ -238,6 +243,7 @@ def leftTopCoordsOfBox(boxx, boxy):
     return (left, top)
 
 
+### Find which board box contains the given pixel coordinates.
 def getBoxAtPixel(x, y):
     for boxx in range(BOARDWIDTH):
         for boxy in range(BOARDHEIGHT):
@@ -248,6 +254,7 @@ def getBoxAtPixel(x, y):
     return (None, None)
 
 
+### Draw a shape with specified color at board position.
 def drawIcon(shape, color, boxx, boxy):
     quarter = int(BOXSIZE * 0.25) # syntactic sugar
     half =    int(BOXSIZE * 0.5)  # syntactic sugar
@@ -269,12 +276,14 @@ def drawIcon(shape, color, boxx, boxy):
         pygame.draw.ellipse(DISPLAYSURF, color, (left, top + quarter, BOXSIZE, half))
 
 
+### Retrieve the shape and color of the icon at position.
 def getShapeAndColor(board, boxx, boxy):
     # shape value for x, y spot is stored in board[x][y][0]
     # color value for x, y spot is stored in board[x][y][1]
     return board[boxx][boxy][0], board[boxx][boxy][1]
 
 
+### Animate boxes sliding open or closed.
 def drawBoxCovers(board, boxes, coverage):
     # Draws boxes being covered/revealed. "boxes" is a list
     # of two-item lists, which have the x & y spot of the box.
@@ -289,18 +298,21 @@ def drawBoxCovers(board, boxes, coverage):
     FPSCLOCK.tick(FPS)
 
 
+### Animate boxes sliding open to reveal the icons underneath.
 def revealBoxesAnimation(board, boxesToReveal):
     # Do the "box reveal" animation.
     for coverage in range(BOXSIZE, (-REVEALSPEED) - 1, -REVEALSPEED):
         drawBoxCovers(board, boxesToReveal, coverage)
 
 
+### Animate boxes sliding closed to hide the icons.
 def coverBoxesAnimation(board, boxesToCover):
     # Do the "box cover" animation.
     for coverage in range(0, BOXSIZE + REVEALSPEED, REVEALSPEED):
         drawBoxCovers(board, boxesToCover, coverage)
 
 
+### Draw all board boxes in their covered or revealed state.
 def drawBoard(board, revealed):
     # Draws all of the boxes in their covered or revealed state.
     for boxx in range(BOARDWIDTH):
@@ -315,11 +327,13 @@ def drawBoard(board, revealed):
                 drawIcon(shape, color, boxx, boxy)
 
 
+### Draw a border around the box at given position.
 def drawHighlightBox(boxx, boxy):
     left, top = leftTopCoordsOfBox(boxx, boxy)
     pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR, (left - 5, top - 5, BOXSIZE + 10, BOXSIZE + 10), 4)
 
 
+### Play opening animation revealing and hiding all boxes.
 def startGameAnimation(board):
     # Randomly reveal the boxes 8 at a time.
     coveredBoxes = generateRevealedBoxesData(False)
@@ -336,6 +350,7 @@ def startGameAnimation(board):
         coverBoxesAnimation(board, boxGroup)
 
 
+### Display flashing colors to celebrate successful game completion.
 def gameWonAnimation(board):
     # flash the background color when the player has won
     coveredBoxes = generateRevealedBoxesData(True)
@@ -351,6 +366,7 @@ def gameWonAnimation(board):
         pygame.time.wait(300)
 
 
+### Check if all boxes on the board have been successfully matched.
 def hasWon(revealedBoxes):
     # Returns True if all the boxes have been revealed, otherwise False
     for i in revealedBoxes:
@@ -358,7 +374,7 @@ def hasWon(revealedBoxes):
             return False # return False if any boxes are covered.
     return True
 
-## Revel a random box for a moment.
+### Revel a random box for a moment.
 # reference startGameAnimation
 # pass in the current game board and the currently revealed boxes
 # revealedBoxes is an array of booleans

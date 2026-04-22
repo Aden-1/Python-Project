@@ -75,6 +75,7 @@ except Exception:
 ## SCALE THE BACKGROUND IMAGE TO FIT THE WINDOW
 BACK_IMAGE = pygame.transform.scale(BACK_IMAGE, (WINDOWWIDTH, WINDOWHEIGHT))
 
+### Initialize pygame and start the main game loop.
 def main():
     global FPSCLOCK, DISPLAYSURF, GEMIMAGES, GAMESOUNDS, BASICFONT, BOARDRECTS
 
@@ -116,6 +117,7 @@ def main():
         runGame()
 
 
+### Execute one complete game from start to game over.
 def runGame():
     # Plays through a single game. When the game is over, this function returns.
 
@@ -267,6 +269,7 @@ def runGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
+### Check if two gems are adjacent and prepare them for swapping.
 def getSwappingGems(board, firstXY, secondXY):
     # If the gems at the (X, Y) coordinates of the two gems are adjacent,
     # then their 'direction' keys are set to the appropriate direction
@@ -297,6 +300,7 @@ def getSwappingGems(board, firstXY, secondXY):
     return firstGem, secondGem
 
 
+### Use this to create a new blank board object.
 def getBlankBoard():
     # Create and return a blank board data structure.
     board = []
@@ -305,6 +309,7 @@ def getBlankBoard():
     return board
 
 
+### Determine if any valid matching move exists on the board.
 def canMakeMove(board):
     # Return True if the board is in a state where a matching
     # move can be made on it. Otherwise return False.
@@ -351,6 +356,7 @@ def canMakeMove(board):
     return False
 
 
+### Create the moving gem animation.
 def drawMovingGem(gem, progress):
     # Draw a gem sliding in the direction that its 'direction' key
     # indicates. The progress parameter is a number from 0 (just
@@ -379,6 +385,7 @@ def drawMovingGem(gem, progress):
     DISPLAYSURF.blit(GEMIMAGES[gem['imageNum']], r)
 
 
+### Move all gems down and fill empty spaces.
 def pullDownAllGems(board):
     # pulls down gems on the board to the bottom to fill in any gaps
     for x in range(BOARDWIDTH):
@@ -389,6 +396,7 @@ def pullDownAllGems(board):
         board[x] = ([EMPTY_SPACE] * (BOARDHEIGHT - len(gemsInColumn))) + gemsInColumn
 
 
+### Retrieve the gem at specified board coordinates.
 def getGemAt(board, x, y):
     if x < 0 or y < 0 or x >= BOARDWIDTH or y >= BOARDHEIGHT:
         return None
@@ -396,6 +404,7 @@ def getGemAt(board, x, y):
         return board[x][y]
 
 
+### Generate a list of gems that need to fill empty board spaces.
 def getDropSlots(board):
     # Creates a "drop slot" for each column and fills the slot with a
     # number of gems that that column is lacking. This function assumes
@@ -426,6 +435,7 @@ def getDropSlots(board):
     return dropSlots
 
 
+### Find and return all gems 3x in a row or longer matches on board.
 def findMatchingGems(board):
     gemsToRemove = [] # a list of lists of gems in matching triplets that should be removed
     boardCopy = copy.deepcopy(board)
@@ -460,10 +470,12 @@ def findMatchingGems(board):
     return gemsToRemove
 
 
+### Draw a colored border around the specified board position.
 def highlightSpace(x, y):
     pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR, BOARDRECTS[x][y], 4)
 
 
+### Find and return gems currently falling down in empty spaces.
 def getDroppingGems(board):
     # Find all the gems that have an empty space below them
     boardCopy = copy.deepcopy(board)
@@ -477,6 +489,7 @@ def getDroppingGems(board):
     return droppingGems
 
 
+### Display animated movement of gems across the game board.
 def animateMovingGems(board, gems, pointsText, score):
     # pointsText is a dictionary with keys 'x', 'y', and 'points'
     progress = 0 # progress at 0 represents beginning, 100 means finished.
@@ -502,6 +515,7 @@ def animateMovingGems(board, gems, pointsText, score):
         progress += MOVERATE # progress the animation a little bit more for the next frame
 
 
+### Update board state to move gems in their designated directions.
 def moveGems(board, movingGems):
     # movingGems is a list of dicts with keys x, y, direction, imageNum
     for gem in movingGems:
@@ -523,6 +537,7 @@ def moveGems(board, movingGems):
             board[gem['x']][0] = gem['imageNum'] # move to top row
 
 
+### Drop new gems to fill empty spaces with animated falling.
 def fillBoardAndAnimate(board, points, score):
     dropSlots = getDropSlots(board)
     while dropSlots != [[]] * BOARDWIDTH:
@@ -546,6 +561,7 @@ def fillBoardAndAnimate(board, points, score):
             del dropSlots[x][0]
 
 
+### Determine which board gem was clicked.
 def checkForGemClick(pos):
     # See if the mouse click was on the board
     for x in range(BOARDWIDTH):
@@ -555,6 +571,7 @@ def checkForGemClick(pos):
     return None # Click was not on the board.
 
 
+### Draw / create all gems and grid lines.
 def drawBoard(board):
     for x in range(BOARDWIDTH):
         for y in range(BOARDHEIGHT):
@@ -564,6 +581,7 @@ def drawBoard(board):
                 DISPLAYSURF.blit(GEMIMAGES[gemToDraw], BOARDRECTS[x][y])
 
 
+### Create a board copy with specified gems removed from view.
 def getBoardCopyMinusGems(board, gems):
     # Creates and returns a copy of the passed board data structure,
     # with the gems in the "gems" list removed from it.
@@ -579,13 +597,14 @@ def getBoardCopyMinusGems(board, gems):
     return boardCopy
 
 
+### Display the current score at the bottom left of screen.
 def drawScore(score):
     scoreImg = BASICFONT.render(str(score), 1, SCORECOLOR)
     scoreRect = scoreImg.get_rect()
     scoreRect.bottomleft = (10, WINDOWHEIGHT - 6)
     DISPLAYSURF.blit(scoreImg, scoreRect)
 
-## Remove a random 3x3 square from the board.
+### Remove a random 3x3 square from the board.
 # Will always remove 9 spaces, does not affect the score.
 def removeRandom3x3(board):
     # prick a random location on the board that is 3 spaces away from the edge on both the x-axis and y-axis
@@ -601,7 +620,7 @@ def removeRandom3x3(board):
             if 0 <= x < BOARDWIDTH and 0 <= y < BOARDHEIGHT:
                 board[x][y] = EMPTY_SPACE
 
-
+### Find and return two adjacent gems that form a match.
 # 'LH' Find two adjacent gems that can be swapped for a match.
 # Returns the coordinates of the two gems, or None if no match is possible.
 def getHint(board):
